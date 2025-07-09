@@ -1,4 +1,4 @@
-# helpers.py - Versão Final para Deploy com st.secrets
+# helpers.py - Versão Final com a função load_css incluída
 
 import streamlit as st
 import gspread
@@ -6,10 +6,20 @@ import pandas as pd
 from google.oauth2.service_account import Credentials
 import google.generativeai as genai
 from datetime import datetime
+import json
+
+# --- FUNÇÃO QUE ESTAVA FALTANDO ---
+def load_css(file_name):
+    """Carrega um arquivo CSS local para dentro do app Streamlit."""
+    try:
+        with open(file_name) as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    except FileNotFoundError:
+        st.error(f"Arquivo de estilo '{file_name}' não encontrado. Verifique se ele foi enviado para o GitHub.")
+
 
 # --- CONFIGURAÇÃO DAS CREDENCIAIS VIA STREAMLIT SECRETS ---
 try:
-    # Pega as credenciais e chaves diretamente dos Secrets que você configurou no Streamlit Cloud
     GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
     GSPREAD_CREDENTIALS_DICT = st.secrets["gspread_credentials"]
 except KeyError as e:
@@ -17,6 +27,7 @@ except KeyError as e:
     st.stop()
     
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
+
 
 # --- FUNÇÕES ---
 
@@ -41,7 +52,6 @@ def get_gemini_model():
         print(f"Erro de configuração Gemini: {e}")
         return None
 
-# Funções que usam o cliente autorizado
 @st.cache_data
 def carregar_base_conhecimento():
     client = get_gspread_client()
