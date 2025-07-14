@@ -7,8 +7,8 @@ load_css("style.css")
 
 # Guarda de Segurança
 if not st.session_state.get('logged_in', False):
-    st.error("Você precisa fazer login para acessar esta página.")
-    st.stop()
+    # Se o usuário não está logado, redireciona para a página de login
+    st.switch_page("1_Login.py")
 
 # Conteúdo da Página
 st.title(f"Bem-vindo(a), {st.session_state.get('matricula', '')}! 👋")
