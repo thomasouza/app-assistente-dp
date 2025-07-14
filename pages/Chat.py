@@ -111,7 +111,6 @@ if 'ultima_resposta' in st.session_state and st.session_state.ultima_resposta:
     disabled=True, # Deixa o campo como "somente leitura"
     label_visibility="visible" # Garante que o título acima da caixa apareça
 )
-    st.divider()
 
     # NOVIDADE: Sistema de Avaliação
     st.subheader("3. Avaliação e Registro")
