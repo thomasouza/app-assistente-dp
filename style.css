@@ -85,3 +85,13 @@ body.dark div[data-testid="stChatMessage"]:has(div[data-testid="stAvatarIcon-ass
 body.dark label {
     color: #EAEAEA !important;
 }
+/* NOVIDADE: Estilo para o bloco de código da resposta da IA */
+/* Garante que ele tenha um fundo claro e texto escuro em qualquer tema */
+pre {
+    background-color: #F0F2F5 !important; /* Fundo cinza claro */
+    color: #111b21 !important; /* Texto escuro */
+    border-radius: 8px;
+    padding: 1rem;
+    white-space: pre-wrap;       /* Garante a quebra de linha do texto */
+    word-break: break-word;      /* Quebra palavras longas se necessário */
+}
