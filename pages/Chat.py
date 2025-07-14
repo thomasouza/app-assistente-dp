@@ -25,7 +25,7 @@ st.title("Assistente de Respostas do DP")
 st.markdown("Use esta ferramenta para gerar respostas padronizadas e precisas para as dúvidas dos colaboradores.")
 st.divider()
 
-# --- SEÇÃO DE INPUTS ---
+
 # --- SEÇÃO DE INPUTS ---
 with st.container(border=True):
     st.subheader("1. Detalhes do Chamado")
@@ -100,7 +100,6 @@ prompt_para_ia = (
                 st.error(f"Ocorreu um erro ao gerar a resposta: {e}")
                 st.session_state.ultima_resposta = None
 
-# --- EXIBIÇÃO DA RESPOSTA E SISTEMA DE AVALIAÇÃO ---
 # --- EXIBIÇÃO DA RESPOSTA E SISTEMA DE AVALIAÇÃO ---
 if 'ultima_resposta' in st.session_state and st.session_state.ultima_resposta:
     st.divider()
