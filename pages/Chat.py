@@ -17,6 +17,7 @@ if not st.session_state.get('logged_in', False):
 # --- DADOS E MODELO ---
 base_conhecimento = carregar_base_conhecimento()
 model = get_gemini_model()
+lista_de_empresas = carregar_empresas()
 
 # --- TELA PRINCIPAL DA FERRAMENTA ---
 st.title("Assistente de Respostas do DP")
