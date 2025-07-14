@@ -1,10 +1,9 @@
-import streamlit as st
 from helpers import (
     load_css, 
     carregar_base_conhecimento, 
     salvar_log, 
-    get_gemini_model
- carregar_empresas
+    get_gemini_model,
+    carregar_empresas
 )
 
 # --- CONFIGURAÇÃO E VERIFICAÇÃO ---
