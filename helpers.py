@@ -82,8 +82,9 @@ def carregar_acessos():
     return None
 
 
-def salvar_log(matricula_dp, nome_colaborador, empresa, pergunta, resposta):
-    """Salva um registro completo do atendimento na planilha de logs."""
+
+def salvar_log(matricula_dp, nome_colaborador, empresa, pergunta, resposta, avaliacao, comentario):
+    """Salva um registro completo do atendimento, incluindo o feedback, na planilha de logs."""
     client = get_gspread_client()
     if client:
         try:
@@ -91,15 +92,16 @@ def salvar_log(matricula_dp, nome_colaborador, empresa, pergunta, resposta):
             log_worksheet = log_spreadsheet.get_worksheet(0)
             timestamp = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
             
-            # Nova linha com as informações adicionais
-            nova_linha = [timestamp, matricula_dp, nome_colaborador, empresa, pergunta, resposta]
+            # Nova linha com as informações de avaliação
+            nova_linha = [timestamp, matricula_dp, nome_colaborador, empresa, pergunta, resposta, avaliacao, comentario]
             
             log_worksheet.append_row(nova_linha)
-            return True # Retorna sucesso
+            return True
         except Exception as e:
             print(f"Erro ao salvar log: {e}")
-            return False # Retorna falha
+            return False
     return False
+
 
 
 def verificar_login(matricula, senha, df_acessos):
