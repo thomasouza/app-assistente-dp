@@ -1,3 +1,4 @@
+import streamlit as st
 from helpers import (
     load_css, 
     carregar_base_conhecimento, 
