@@ -24,6 +24,7 @@ st.markdown("Use esta ferramenta para gerar respostas padronizadas e precisas pa
 st.divider()
 
 # --- SEÇÃO DE INPUTS ---
+# --- SEÇÃO DE INPUTS ---
 with st.container(border=True):
     st.subheader("1. Detalhes do Chamado")
     
@@ -32,7 +33,10 @@ with st.container(border=True):
         colaborador_solicitante = st.text_input("Nome do Colaborador que perguntou:")
 
     with col2:
-        empresa_solicitante = st.text_input("Empresa do Colaborador:")
+        # NOVIDADE: Trocado st.text_input por st.selectbox
+        # Adiciona uma opção em branco no início
+        opcoes_empresa = ["Selecione uma empresa..."] + lista_de_empresas
+        empresa_solicitante = st.selectbox("Empresa do Colaborador:", options=opcoes_empresa)
 
     # NOVIDADE: Trocado "Chat Comum" por "Discord"
     canal_comunicacao = st.radio(
@@ -54,6 +58,10 @@ with st.container(border=True):
     pergunta_colaborador = st.text_area("Copie e cole aqui a pergunta do colaborador:", height=100)
 
 # --- BOTÃO DE AÇÃO E LÓGICA DA IA ---
+if st.button("🤖 Gerar Resposta Sugerida", use_container_width=True, type="primary"):
+    # Adicionada validação para o novo campo de seleção
+    if empresa_solicitante == "Selecione uma empresa...":
+        st.warning("Por favor, selecione a empresa do colaborador.")
 if st.button("🤖 Gerar Resposta Sugerida", use_container_width=True, type="primary"):
     if not all([colaborador_solicitante, empresa_solicitante, pergunta_colaborador, agente_selecionado]):
         st.warning("Por favor, preencha todos os campos do chamado antes de gerar a resposta.")
