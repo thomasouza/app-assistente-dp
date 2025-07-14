@@ -85,7 +85,31 @@ def carregar_acessos():
             print(f"Erro ao carregar acessos: {e}")
     return None
 
+# Em helpers.py, adicione esta nova função:
 
+@st.cache_data(ttl=600) # Cache para não recarregar a lista toda hora
+def carregar_empresas():
+    """Carrega a lista de empresas da planilha."""
+    client = get_gspread_client()
+    if client:
+        try:
+            spreadsheet = client.open("ACESSOS_ASSISTENTE_DP") # Ou o nome da planilha onde você criou a aba
+            worksheet = spreadsheet.worksheet("EMPRESAS") # Abre a aba específica "EMPRESAS"
+            # Pega todos os valores da primeira coluna, exceto o cabeçalho
+            lista_empresas = worksheet.col_values(1)[1:] 
+            return lista_empresas
+        except gspread.exceptions.WorksheetNotFound:
+            st.error("Aba 'EMPRESAS' não encontrada na planilha. Por favor, crie-a.")
+            return []
+        except Exception as e:
+            st.error("Não foi possível carregar a lista de empresas.")
+            print(f"Erro ao carregar empresas: {e}")
+            return []
+    return []
+
+# Não se esqueça de importar a nova função nos arquivos que a usarão.
+# Em 3_Chat_com_Agentes.py, o import ficará:
+# from helpers import load_css, carregar_base_conhecimento, salvar_log, get_gemini_model, carregar_empresas
 
 def salvar_log(matricula_dp, nome_colaborador, empresa, pergunta, resposta, avaliacao, comentario):
     """Salva um registro completo do atendimento, incluindo o feedback, na planilha de logs."""
