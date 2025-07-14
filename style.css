@@ -21,6 +21,36 @@ html, body {
     height: 100vh;
 }
 
+/* style.css - Versão com bordas de input melhoradas */
+
+/* ... (as outras regras de CSS como .block-container, stSidebar, etc., continuam iguais) ... */
+
+/* NOVIDADE: Estilo para os campos de texto (st.text_input) */
+div[data-testid="stTextInput"] > div > div > input {
+    border: 1px solid #E0E0E0; /* Borda cinza clara */
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #FFFFFF; /* Fundo branco para garantir legibilidade no tema escuro */
+    color: #000000; /* Texto preto para garantir legibilidade */
+}
+
+/* NOVIDADE: Estilo para a caixa de seleção (st.selectbox) */
+div[data-testid="stSelectbox"] > div {
+    border: 1px solid #E0E0E0;
+    border-radius: 5px;
+    background-color: #FFFFFF;
+}
+
+/* Bolhas de Chat */
+div[data-testid="stChatMessage"]:has(div[data-testid="stAvatarIcon-user"]) {
+    background-color: #D9FDD3;
+}
+div[data-testid="stChatMessage"]:has(div[data-testid="stAvatarIcon-assistant"]) {
+    background-color: #FFFFFF;
+}
+
+/* (O resto do seu CSS permanece aqui) */
+
 /* --- ESTILOS DA SIDEBAR (MENU LATERAL) --- */
 section[data-testid="stSidebar"] > div:first-child {
     background-color: #1E1E1E !important; /* Fundo escuro */
