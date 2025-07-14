@@ -97,7 +97,22 @@ if st.button("🤖 Gerar Resposta Sugerida", use_container_width=True, type="pri
 if 'ultima_resposta' in st.session_state and st.session_state.ultima_resposta:
     st.divider()
     st.subheader("2. Resposta Sugerida pela IA")
+
+    # NOVIDADE: Exibe a resposta em um campo de texto com quebra de linha para leitura
+    st.text_area(
+        label="Pré-visualização da resposta:",
+        value=st.session_state.ultima_resposta,
+        height=200,
+        disabled=True
+    )
+
+    # NOVIDADE: Exibe a resposta em um bloco de código para cópia fácil
+    st.code(st.session_state.ultima_resposta, language=None)
+    st.caption("Clique no ícone no canto direito do campo acima para copiar todo o texto.")
     
+    st.divider()
+
+    st.subheader("3. Avaliação e Registro")
     st.text_area(label="Copia a resposta sugerida abaixo:", value=st.session_state.ultima_resposta, height=200, disabled=True)
 
     st.divider()
