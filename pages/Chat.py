@@ -99,46 +99,46 @@ if st.button("🤖 Gerar Resposta Sugerida", use_container_width=True, type="pri
                 st.session_state.ultima_resposta = None
 
 # --- EXIBIÇÃO DA RESPOSTA E SISTEMA DE AVALIAÇÃO ---
+# --- EXIBIÇÃO DA RESPOSTA E SISTEMA DE AVALIAÇÃO ---
 if 'ultima_resposta' in st.session_state and st.session_state.ultima_resposta:
     st.divider()
-    st.subheader("2. Resposta Sugerida pela IA")
+    st.subheader("3. Resposta Sugerida pela IA")
     
-    # NOVIDADE: Botão de cópia fácil
-  st.text_area(
-    label="Copia a resposta sugerida abaixo:",
-    value=st.session_state.ultima_resposta,
-    height=200,  # Você pode ajustar a altura da caixa conforme desejar
-    disabled=True, # Deixa o campo como "somente leitura"
-    label_visibility="visible" # Garante que o título acima da caixa apareça
-)
+    # Este é o bloco que trocamos, agora com a indentação correta para o que vem depois
+    st.text_area(
+        label="Copia a resposta sugerida abaixo:",
+        value=st.session_state.ultima_resposta,
+        height=200,
+        disabled=True,
+        label_visibility="visible"
+    )
 
-    # NOVIDADE: Sistema de Avaliação
-    st.subheader("3. Avaliação e Registro")
+    st.divider()
+
+    st.subheader("4. Avaliação e Registro")
     
-    # Inicializa o estado do feedback
-    if 'feedback_comment' not in st.session_state:
-        st.session_state.feedback_comment = ""
     if 'feedback_given' not in st.session_state:
         st.session_state.feedback_given = None
 
     col1, col2 = st.columns(2)
-    with col1:
-        if st.button("👍 Resposta Positiva", use_container_width=True):
-            st.session_state.feedback_given = "Positiva"
-    with col2:
-        if st.button("👎 Resposta Negativa", use_container_width=True):
-            st.session_state.feedback_given = "Negativa"
+    if col1.button("👍 Resposta Positiva", use_container_width=True):
+        st.session_state.feedback_given = "Positiva"
+    if col2.button("👎 Resposta Negativa", use_container_width=True):
+        st.session_state.feedback_given = "Negativa"
 
-    # Mostra campo de comentário se a avaliação for negativa
+    # Garante que o estado do comentário seja gerenciado corretamente
     if st.session_state.feedback_given == "Negativa":
         st.session_state.feedback_comment = st.text_area(
-            "O que pode ser melhorado? (Obrigatório para avaliação negativa)"
+            "O que pode ser melhorado? (Obrigatório para avaliação negativa)", 
+            key="feedback_comment_input"
         )
-
-    # Lógica para salvar
+    else:
+        # Garante que o comentário seja limpo se a avaliação for positiva
+        st.session_state.feedback_comment = ""
+    
     if st.session_state.feedback_given:
-        # Validação para comentário em avaliação negativa
-        if st.session_state.feedback_given == "Negativa" and not st.session_state.feedback_comment:
+        # Validação para garantir que o comentário negativo não esteja vazio
+        if st.session_state.feedback_given == "Negativa" and not st.session_state.get('feedback_comment'):
             st.warning("Por favor, descreva o motivo da avaliação negativa antes de registrar.")
         else:
             if st.button("Salvar Avaliação e Registrar Log", use_container_width=True, type="primary"):
@@ -150,11 +150,11 @@ if 'ultima_resposta' in st.session_state and st.session_state.ultima_resposta:
                         pergunta=st.session_state.get('ultima_pergunta'),
                         resposta=st.session_state.get('ultima_resposta'),
                         avaliacao=st.session_state.feedback_given,
-                        comentario=st.session_state.feedback_comment
+                        comentario=st.session_state.get('feedback_comment', "")
                     )
                     if sucesso:
                         st.success("Atendimento e avaliação registrados com sucesso!")
-                        # Limpa tudo para o próximo atendimento
+                        # Limpa os campos para o próximo atendimento
                         for key in ['ultima_resposta', 'ultima_pergunta', 'dados_solicitante', 'feedback_given', 'feedback_comment']:
                             if key in st.session_state:
                                 del st.session_state[key]
@@ -165,4 +165,4 @@ if 'ultima_resposta' in st.session_state and st.session_state.ultima_resposta:
 st.sidebar.markdown("---")
 if st.sidebar.button("Sair da Sessão", use_container_width=True):
     st.session_state.clear()
-    st.switch_page("1_Login.py")
+    st.switch_page("Login.py")
