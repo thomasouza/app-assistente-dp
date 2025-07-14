@@ -1,11 +1,9 @@
 import streamlit as st
-# Adicionada a nova função no import
 from helpers import (
     load_css, 
     carregar_base_conhecimento, 
     salvar_log, 
-    get_gemini_model,
-    carregar_empresas 
+    get_gemini_model
 )
 
 # --- CONFIGURAÇÃO E VERIFICAÇÃO ---
@@ -19,7 +17,6 @@ if not st.session_state.get('logged_in', False):
 # --- DADOS E MODELO ---
 base_conhecimento = carregar_base_conhecimento()
 model = get_gemini_model()
-lista_de_empresas = carregar_empresas() # Carrega a nova lista de empresas
 
 # --- TELA PRINCIPAL DA FERRAMENTA ---
 st.title("Assistente de Respostas do DP")
@@ -35,20 +32,15 @@ with st.container(border=True):
         colaborador_solicitante = st.text_input("Nome do Colaborador que perguntou:")
 
     with col2:
-        # NOVIDADE: Trocado st.text_input por st.selectbox
-        # Adiciona uma opção em branco no início
-        opcoes_empresa = ["Selecione uma empresa..."] + lista_de_empresas
-        empresa_solicitante = st.selectbox("Empresa do Colaborador:", options=opcoes_empresa)
-    
+        empresa_solicitante = st.text_input("Empresa do Colaborador:")
 
-    # NOVIDADE: Seleção de Canal de Comunicação
+    # NOVIDADE: Trocado "Chat Comum" por "Discord"
     canal_comunicacao = st.radio(
         "Selecione o canal da resposta:",
-        ["💬 Chat Comum", "📧 E-mail", "📱 WhatsApp"],
+        ["💬 Discord", "📧 E-mail", "📱 WhatsApp"],
         horizontal=True
     )
     
-    # Seleção do Agente/Especialista
     if base_conhecimento:
         topicos = list(base_conhecimento.keys())
         agente_selecionado = st.selectbox(
@@ -59,39 +51,29 @@ with st.container(border=True):
     else:
         agente_selecionado = None
 
-    # Campo da pergunta
-    pergunta_colaborador = st.text_area(
-        "Copie e cole aqui a pergunta do colaborador:", 
-        height=100
-    )
-
-# --- BOTÃO DE AÇÃO E LÓGICA DA IA ---
+    pergunta_colaborador = st.text_area("Copie e cole aqui a pergunta do colaborador:", height=100)
 
 # --- BOTÃO DE AÇÃO E LÓGICA DA IA ---
 if st.button("🤖 Gerar Resposta Sugerida", use_container_width=True, type="primary"):
-    # Adicionada validação para o novo campo de seleção
-    if empresa_solicitante == "Selecione uma empresa...":
-        st.warning("Por favor, selecione a empresa do colaborador.")
-    # Validações dos campos
-    if not all([nome_solicitante, empresa_solicitante, pergunta_colaborador, agente_selecionado]):
+    if not all([colaborador_solicitante, empresa_solicitante, pergunta_colaborador, agente_selecionado]):
         st.warning("Por favor, preencha todos os campos do chamado antes de gerar a resposta.")
     elif base_conhecimento and model:
         with st.spinner("Vivi está personalizando a resposta..."):
             try:
-                # NOVIDADE: Prompt dinâmico com base no canal e no nome
                 df_topico = base_conhecimento[agente_selecionado]
                 contexto = "\n".join([f"P: {row['Pergunta']}\nR: {row['Resposta_Oficial']}" for _, row in df_topico.iterrows()])
                 
+                # NOVIDADE: Adicionada instrução para o formato Discord
                 instrucao_canal = ""
                 if canal_comunicacao == "📧 E-mail":
                     instrucao_canal = "Formate a resposta como um e-mail profissional, começando com 'Prezado(a) {nome_solicitante},' e terminando com 'Atenciosamente, Equipe de DP.'."
                 elif canal_comunicacao == "📱 WhatsApp":
                     instrucao_canal = "Formate a resposta para WhatsApp, usando texto em negrito (*texto*) e quebras de linha curtas para melhor leitura. Seja um pouco mais informal, mas ainda profissional."
-                else: # Chat Comum
-                    instrucao_canal = "Formate a resposta de forma direta e clara para um chat interno."
+                elif canal_comunicacao == "💬 Discord":
+                    instrucao_canal = "Formate a resposta para Discord. Use markdown do Discord como **para negrito** e *para itálico*. Mantenha a linguagem amigável e use emojis onde for apropriado."
 
                 prompt_para_ia = (
-                    f"Você é um 'co-piloto' para a equipe de DP da VIVA. Sua tarefa é gerar uma sugestão de resposta para a pergunta de um colaborador. A resposta deve ser direcionada ao colaborador chamado '{nome_solicitante}'.\n"
+                    f"Você é um 'co-piloto' para a equipe de DP da VIVA. Sua tarefa é gerar uma sugestão de resposta para a pergunta de um colaborador. A resposta deve ser direcionada ao colaborador chamado '{colaborador_solicitante}'.\n"
                     f"{instrucao_canal}\n"
                     f"Baseie-se estritamente no contexto do especialista em '{agente_selecionado}'. Não invente informações.\n\n"
                     f"Contexto:\n{contexto}\n\n"
@@ -101,13 +83,9 @@ if st.button("🤖 Gerar Resposta Sugerida", use_container_width=True, type="pri
                 
                 resposta_texto = model.generate_content(prompt_para_ia).text
                 
-                # Guarda tudo na sessão para os próximos passos
                 st.session_state.ultima_resposta = resposta_texto
                 st.session_state.ultima_pergunta = pergunta_colaborador
-                st.session_state.dados_solicitante = {
-                    "nome": nome_solicitante,
-                    "empresa": empresa_solicitante
-                }
+                st.session_state.dados_solicitante = {"nome": colaborador_solicitante, "empresa": empresa_solicitante}
 
             except Exception as e:
                 st.error(f"Ocorreu um erro ao gerar a resposta: {e}")
