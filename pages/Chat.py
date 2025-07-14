@@ -4,6 +4,7 @@ from helpers import (
     carregar_base_conhecimento, 
     salvar_log, 
     get_gemini_model
+ carregar_empresas
 )
 
 # --- CONFIGURAÇÃO E VERIFICAÇÃO ---
