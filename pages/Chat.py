@@ -1,11 +1,11 @@
-# pages/3_Chat_com_Agentes.py - Versão com Personalização e Feedback
-
 import streamlit as st
+# Adicionada a nova função no import
 from helpers import (
     load_css, 
     carregar_base_conhecimento, 
     salvar_log, 
-    get_gemini_model
+    get_gemini_model,
+    carregar_empresas 
 )
 
 # --- CONFIGURAÇÃO E VERIFICAÇÃO ---
@@ -13,27 +13,33 @@ st.set_page_config(layout="centered", initial_sidebar_state="collapsed")
 load_css("style.css")
 
 if not st.session_state.get('logged_in', False):
-    st.switch_page("Login.py")
+    st.error("Você precisa fazer login para acessar esta página.")
+    st.stop()
 
 # --- DADOS E MODELO ---
 base_conhecimento = carregar_base_conhecimento()
 model = get_gemini_model()
+lista_de_empresas = carregar_empresas() # Carrega a nova lista de empresas
 
 # --- TELA PRINCIPAL DA FERRAMENTA ---
 st.title("Assistente de Respostas do DP")
-st.markdown("Gere e adapte respostas para diferentes canais de comunicação.")
+st.markdown("Use esta ferramenta para gerar respostas padronizadas e precisas para as dúvidas dos colaboradores.")
 st.divider()
 
 # --- SEÇÃO DE INPUTS ---
 with st.container(border=True):
     st.subheader("1. Detalhes do Chamado")
     
-    # Inputs para identificação
     col1, col2 = st.columns(2)
     with col1:
-        nome_solicitante = st.text_input("Nome do Colaborador que perguntou:")
+        colaborador_solicitante = st.text_input("Nome do Colaborador que perguntou:")
+
     with col2:
-        empresa_solicitante = st.text_input("Empresa do Colaborador:")
+        # NOVIDADE: Trocado st.text_input por st.selectbox
+        # Adiciona uma opção em branco no início
+        opcoes_empresa = ["Selecione uma empresa..."] + lista_de_empresas
+        empresa_solicitante = st.selectbox("Empresa do Colaborador:", options=opcoes_empresa)
+    
 
     # NOVIDADE: Seleção de Canal de Comunicação
     canal_comunicacao = st.radio(
@@ -60,7 +66,12 @@ with st.container(border=True):
     )
 
 # --- BOTÃO DE AÇÃO E LÓGICA DA IA ---
+
+# --- BOTÃO DE AÇÃO E LÓGICA DA IA ---
 if st.button("🤖 Gerar Resposta Sugerida", use_container_width=True, type="primary"):
+    # Adicionada validação para o novo campo de seleção
+    if empresa_solicitante == "Selecione uma empresa...":
+        st.warning("Por favor, selecione a empresa do colaborador.")
     # Validações dos campos
     if not all([nome_solicitante, empresa_solicitante, pergunta_colaborador, agente_selecionado]):
         st.warning("Por favor, preencha todos os campos do chamado antes de gerar a resposta.")
