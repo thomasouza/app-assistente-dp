@@ -48,7 +48,13 @@ body:not(.dark) div[data-testid="stChatMessage"]:has(div[data-testid="stAvatarIc
     background-color: #F0F2F5; /* Cinza claro */
     border-radius: 8px;
 }
-
+/* NOVIDADE: Garante que o texto na área de resposta seja sempre escuro e legível */
+div[data-testid="stTextArea"] textarea:disabled {
+    color: #111b21 !important; /* Cor preta, !important para garantir prioridade */
+    background-color: #FFFFFF; /* Fundo sempre branco */
+    border: 1px solid #D1D7DB;
+    border-radius: 8px;
+ }   
 /* --- TEMA ESCURO --- */
 
 /* Fundo principal da página no tema escuro */
@@ -75,4 +81,7 @@ body.dark div[data-testid="stTextArea"] textarea {
 body.dark div[data-testid="stChatMessage"]:has(div[data-testid="stAvatarIcon-assistant"]) {
     background-color: #2a2a2a; /* Cinza escuro */
     border-radius: 8px;
+}
+body.dark label {
+    color: #EAEAEA !important;
 }
