@@ -62,9 +62,6 @@ if st.button("🤖 Gerar Resposta Sugerida", use_container_width=True, type="pri
     # Adicionada validação para o novo campo de seleção
     if empresa_solicitante == "Selecione uma empresa...":
         st.warning("Por favor, selecione a empresa do colaborador.")
-if st.button("🤖 Gerar Resposta Sugerida", use_container_width=True, type="primary"):
-    if not all([colaborador_solicitante, empresa_solicitante, pergunta_colaborador, agente_selecionado]):
-        st.warning("Por favor, preencha todos os campos do chamado antes de gerar a resposta.")
     elif base_conhecimento and model:
         with st.spinner("Vivi está personalizando a resposta..."):
             try:
