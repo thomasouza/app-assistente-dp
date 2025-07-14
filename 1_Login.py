@@ -88,7 +88,7 @@ with col2:
         elif verificar_login(matricula_input, senha_input, df_acessos):
             st.session_state.logged_in = True
             st.session_state.matricula = matricula_input
-            st.switch_page("pages/2_Menu_Principal.py")
+            st.switch_page("pages/Menu.py")
         else:
             st.error("Matrícula ou senha incorreta.")
 
