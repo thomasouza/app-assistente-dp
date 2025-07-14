@@ -104,7 +104,13 @@ if 'ultima_resposta' in st.session_state and st.session_state.ultima_resposta:
     st.subheader("2. Resposta Sugerida pela IA")
     
     # NOVIDADE: Botão de cópia fácil
-    st.code(st.session_state.ultima_resposta, language=None)
+  st.text_area(
+    label="Copia a resposta sugerida abaixo:",
+    value=st.session_state.ultima_resposta,
+    height=200,  # Você pode ajustar a altura da caixa conforme desejar
+    disabled=True, # Deixa o campo como "somente leitura"
+    label_visibility="visible" # Garante que o título acima da caixa apareça
+)
     st.divider()
 
     # NOVIDADE: Sistema de Avaliação
