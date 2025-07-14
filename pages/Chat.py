@@ -98,36 +98,42 @@ if 'ultima_resposta' in st.session_state and st.session_state.ultima_resposta:
     st.divider()
     st.subheader("2. Resposta Sugerida pela IA")
     
-# Exibe a resposta no bloco de código, que tem o botão de copiar.
-st.code(st.session_state.ultima_resposta, language=None)
-st.caption("Clique no ícone no canto direito do campo acima para copiar o texto.")
-    
+    # Bloco de código para exibir a resposta (com quebra de linha)
+    st.code(st.session_state.ultima_resposta, language=None)
+    st.caption("Clique no ícone no canto direito do campo acima para copiar o texto.")
 
     st.divider()
 
     st.subheader("3. Avaliação e Registro")
     
+    # Garante que a variável de feedback exista na sessão
     if 'feedback_given' not in st.session_state:
         st.session_state.feedback_given = None
 
+    # Botões de avaliação
     col1, col2 = st.columns(2)
     if col1.button("👍 Resposta Positiva", use_container_width=True):
         st.session_state.feedback_given = "Positiva"
     if col2.button("👎 Resposta Negativa", use_container_width=True):
         st.session_state.feedback_given = "Negativa"
 
+    # Campo de comentário para avaliação negativa
     if st.session_state.feedback_given == "Negativa":
-        st.session_state.feedback_comment = st.text_area("O que pode ser melhorado? (Obrigatório para avaliação negativa)", key="feedback_comment_input")
+        st.session_state.feedback_comment = st.text_area(
+            "O que pode ser melhorado? (Obrigatório para avaliação negativa)",
+            key="feedback_comment_input"
+        )
     else:
         st.session_state.feedback_comment = ""
     
+    # Lógica para salvar o log após a avaliação
     if st.session_state.feedback_given:
         if st.session_state.feedback_given == "Negativa" and not st.session_state.get('feedback_comment'):
-            st.warning("Por favor, descreva a resposta correta ou o motivo da avaliação negativa antes de registrar.")
+            st.warning("Por favor, descreva o motivo da avaliação negativa antes de registrar.")
         else:
             if st.button("Salvar Avaliação e Registrar Log", use_container_width=True, type="primary"):
-                with st.spinner("Salvando registro e aprendizado..."):
-                    sucesso_log = salvar_log(
+                with st.spinner("Salvando registro..."):
+                    sucesso = salvar_log(
                         matricula_dp=st.session_state.get('matricula'),
                         nome_colaborador=st.session_state.dados_solicitante['nome'],
                         empresa=st.session_state.dados_solicitante['empresa'],
@@ -136,26 +142,12 @@ st.caption("Clique no ícone no canto direito do campo acima para copiar o texto
                         avaliacao=st.session_state.feedback_given,
                         comentario=st.session_state.get('feedback_comment', "")
                     )
-                    
-                    if st.session_state.feedback_given == "Negativa":
-                        sucesso_aprendizado = salvar_aprendizado(
-                            assunto=st.session_state.get('agente_usado'),
-                            pergunta=st.session_state.get('ultima_pergunta'),
-                            resposta_ia=st.session_state.get('ultima_resposta'),
-                            comentario_humano=st.session_state.get('feedback_comment')
-                        )
-                        if sucesso_aprendizado: st.cache_data.clear()
-                    
-                    if sucesso_log:
-                        st.success("Atendimento registrado e feedback salvo com sucesso!")
+                    if sucesso:
+                        st.success("Atendimento e avaliação registrados com sucesso!")
+                        # Limpa os dados para o próximo atendimento
+                        for key in ['ultima_resposta', 'ultima_pergunta', 'dados_solicitante', 'feedback_given', 'feedback_comment']:
+                            if key in st.session_state:
+                                del st.session_state[key]
+                        st.rerun()
                     else:
-                        st.error("Falha ao registrar o log do atendimento.")
-
-                    for key in ['ultima_resposta', 'ultima_pergunta', 'dados_solicitante', 'feedback_given', 'feedback_comment', 'agente_usado']:
-                        if key in st.session_state: del st.session_state[key]
-                    st.rerun()
-
-st.sidebar.markdown("---")
-if st.sidebar.button("Sair da Sessão", use_container_width=True):
-    st.session_state.clear()
-    st.switch_page("Login.py")
+                        st.error("Falha ao registrar o log.")
