@@ -79,14 +79,16 @@ if st.button("🤖 Gerar Resposta Sugerida", use_container_width=True, type="pri
                 elif canal_comunicacao == "💬 Discord":
                     instrucao_canal = "Formate a resposta para Discord. Use markdown do Discord como **para negrito** e *para itálico*. Mantenha a linguagem amigável e use emojis onde for apropriado."
 
-                prompt_para_ia = (
-                    f"Você é um 'co-piloto' para a equipe de DP da VIVA. Sua tarefa é gerar uma sugestão de resposta para a pergunta de um colaborador. A resposta deve ser direcionada ao colaborador chamado '{colaborador_solicitante}'.\n"
-                    f"{instrucao_canal}\n"
-                    f"Baseie-se estritamente no contexto do especialista em '{agente_selecionado}'. Não invente informações.\n\n"
-                    f"Contexto:\n{contexto}\n\n"
-                    f"Pergunta do Colaborador: {pergunta_colaborador}\n\n"
-                    f"Sugestão de Resposta:"
-                )
+          # CÓDIGO NOVO DO PROMPT (MAIS SEGURO)
+prompt_para_ia = (
+    f"Você é um assistente de DP. Sua única função é responder à pergunta do colaborador com base estritamente no CONTEXTO fornecido. "
+    f"Adapte a formatação da resposta para o canal '{canal_comunicacao}', direcionando-a para '{nome_solicitante}'.\n"
+    f"**REGRA CRÍTICA:** Se a resposta para a pergunta não estiver claramente no CONTEXTO, você deve responder EXATAMENTE e APENAS com a frase: 'Resposta não disponível na minha base de conhecimento.'\n"
+    f"Não invente, deduza ou use conhecimento externo.\n\n"
+    f"CONTEXTO:\n{contexto}\n\n"
+    f"PERGUNTA DO COLABORADOR: {pergunta_colaborador}\n\n"
+    f"RESPOSTA GERADA:"
+)
                 
                 resposta_texto = model.generate_content(prompt_para_ia).text
                 
@@ -141,26 +143,47 @@ if 'ultima_resposta' in st.session_state and st.session_state.ultima_resposta:
         if st.session_state.feedback_given == "Negativa" and not st.session_state.get('feedback_comment'):
             st.warning("Por favor, descreva o motivo da avaliação negativa antes de registrar.")
         else:
-            if st.button("Salvar Avaliação e Registrar Log", use_container_width=True, type="primary"):
-                with st.spinner("Salvando..."):
-                    sucesso = salvar_log(
-                        matricula_dp=st.session_state.get('matricula'),
-                        nome_colaborador=st.session_state.dados_solicitante['nome'],
-                        empresa=st.session_state.dados_solicitante['empresa'],
+            # CÓDIGO NOVO DO BOTÃO DE SALVAR (COM APRENDIZADO)
+if st.session_state.feedback_given:
+    if st.session_state.feedback_given == "Negativa" and not st.session_state.get('feedback_comment'):
+        st.warning("Por favor, descreva a resposta correta ou o motivo da avaliação negativa antes de registrar.")
+    else:
+        if st.button("Salvar Avaliação e Registrar Log", use_container_width=True, type="primary"):
+            with st.spinner("Salvando registro e aprendizado..."):
+                
+                # Salva o log normal
+                sucesso_log = salvar_log(
+                    matricula_dp=st.session_state.get('matricula'),
+                    nome_colaborador=st.session_state.dados_solicitante['nome'],
+                    empresa=st.session_state.dados_solicitante['empresa'],
+                    pergunta=st.session_state.get('ultima_pergunta'),
+                    resposta=st.session_state.get('ultima_resposta'),
+                    avaliacao=st.session_state.feedback_given,
+                    comentario=st.session_state.get('feedback_comment', "")
+                )
+                
+                # Se a avaliação foi negativa, salva o aprendizado na outra planilha
+                if st.session_state.feedback_given == "Negativa":
+                    sucesso_aprendizado = salvar_aprendizado(
+                        assunto=st.session_state.get('agente_usado', agente_selecionado),
                         pergunta=st.session_state.get('ultima_pergunta'),
-                        resposta=st.session_state.get('ultima_resposta'),
-                        avaliacao=st.session_state.feedback_given,
-                        comentario=st.session_state.get('feedback_comment', "")
+                        resposta_ia=st.session_state.get('ultima_resposta'),
+                        comentario_humano=st.session_state.get('feedback_comment')
                     )
-                    if sucesso:
-                        st.success("Atendimento e avaliação registrados com sucesso!")
-                        # Limpa os campos para o próximo atendimento
-                        for key in ['ultima_resposta', 'ultima_pergunta', 'dados_solicitante', 'feedback_given', 'feedback_comment']:
-                            if key in st.session_state:
-                                del st.session_state[key]
-                        st.rerun()
-                    else:
-                        st.error("Falha ao registrar o log.")
+                    # Limpa o cache para que a IA leia o novo aprendizado na próxima vez
+                    if sucesso_aprendizado:
+                        st.cache_data.clear()
+                
+                if sucesso_log:
+                    st.success("Atendimento registrado e feedback salvo com sucesso!")
+                else:
+                    st.error("Falha ao registrar o log do atendimento.")
+
+                # Limpa os dados para o próximo atendimento
+                for key in ['ultima_resposta', 'ultima_pergunta', 'dados_solicitante', 'feedback_given', 'feedback_comment', 'agente_usado']:
+                    if key in st.session_state:
+                        del st.session_state[key]
+                st.rerun()
 
 st.sidebar.markdown("---")
 if st.sidebar.button("Sair da Sessão", use_container_width=True):
