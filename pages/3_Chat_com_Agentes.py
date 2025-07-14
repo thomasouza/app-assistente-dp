@@ -13,8 +13,7 @@ st.set_page_config(layout="centered", initial_sidebar_state="collapsed")
 load_css("style.css")
 
 if not st.session_state.get('logged_in', False):
-    st.error("Você precisa fazer login para acessar esta página.")
-    st.stop()
+    st.switch_page("1_Login.py")
 
 # --- DADOS E MODELO ---
 base_conhecimento = carregar_base_conhecimento()
