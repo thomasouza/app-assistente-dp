@@ -13,7 +13,7 @@ st.set_page_config(layout="centered", initial_sidebar_state="collapsed")
 load_css("style.css")
 
 if not st.session_state.get('logged_in', False):
-    st.switch_page("1_Login.py")
+    st.switch_page("Login.py")
 
 # --- DADOS E MODELO ---
 base_conhecimento = carregar_base_conhecimento()
