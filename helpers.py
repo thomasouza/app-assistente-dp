@@ -65,8 +65,12 @@ def carregar_base_conhecimento():
             print(f"Erro ao carregar base de conhecimento: {e}")
     return None
 
-@st.cache_data
+# E SUBSTITUA por este novo bloco:
+
+# A única mudança é nesta primeira linha, adicionando o (ttl=600)
+@st.cache_data(ttl=600)
 def carregar_acessos():
+    """Carrega os dados da planilha de acessos, com cache que expira a cada 10 minutos."""
     client = get_gspread_client()
     if client:
         try:
