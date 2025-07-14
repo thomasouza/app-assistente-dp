@@ -1,145 +1,78 @@
-/* CSS Definitivo - Foco em Especificidade e Design Final */
+/* style.css - Versão Definitiva com Suporte Total a Temas Claro/Escuro */
 
-/* --- CONFIGURAÇÃO GERAL --- */
-/* Remove o padding do topo para dar espaço ao nosso cabeçalho customizado */
-.block-container {
-    padding-top: 1rem !important;
-}
+/* --- ESTILOS GERAIS (Aplicados em ambos os temas) --- */
 
-/* Fundo principal da página (onde fica a marca d'água) */
-[data-testid="stAppViewContainer"] > .main {
-    background-color: #DADBD3; /* Cinza-bege de fundo */
-    background-image: url('https://www.toptal.com/designers/subtlepatterns/uploads/watercolor.png');
-    background-size: 300px;
-    overflow: hidden;
-    height: 100vh;
-}
-
-/* Remove scroll geral da página */
-html, body {
-    overflow: hidden;
-    height: 100vh;
-}
-
-/* style.css - Versão com bordas de input melhoradas */
-
-/* ... (as outras regras de CSS como .block-container, stSidebar, etc., continuam iguais) ... */
-
-/* NOVIDADE: Estilo para os campos de texto (st.text_input) */
-div[data-testid="stTextInput"] > div > div > input {
-    border: 1px solid #E0E0E0; /* Borda cinza clara */
-    border-radius: 5px;
-    padding: 10px;
-    background-color: #FFFFFF; /* Fundo branco para garantir legibilidade no tema escuro */
-    color: #000000; /* Texto preto para garantir legibilidade */
-}
-
-/* NOVIDADE: Estilo para a caixa de seleção (st.selectbox) */
-div[data-testid="stSelectbox"] > div {
-    border: 1px solid #E0E0E0;
-    border-radius: 5px;
-    background-color: #FFFFFF;
-}
-
-/* Bolhas de Chat */
-div[data-testid="stChatMessage"]:has(div[data-testid="stAvatarIcon-user"]) {
-    background-color: #D9FDD3;
-}
-div[data-testid="stChatMessage"]:has(div[data-testid="stAvatarIcon-assistant"]) {
-    background-color: #FFFFFF;
-}
-
-/* (O resto do seu CSS permanece aqui) */
-
-/* --- ESTILOS DA SIDEBAR (MENU LATERAL) --- */
-section[data-testid="stSidebar"] > div:first-child {
-    background-color: #1E1E1E !important; /* Fundo escuro */
-    padding: 1rem;
-    color: #FFFFFF;
-}
-
-/* Força cores brancas nos elementos da sidebar */
-section[data-testid="stSidebar"] * {
-    color: #FFFFFF !important;
-}
-
-/* Esconde o menu de navegação padrão do Streamlit */
+/* Esconde o menu de navegação padrão do Streamlit na sidebar */
 [data-testid="stSidebarNav"] {
     display: none;
 }
 
-/* Estilo dos botões de Agente na Sidebar */
-.stButton > button {
-    border-radius: 8px;
-    font-weight: 600;
-    text-align: left;
-    border: 1px solid #E0E0E0;
-    background-color: #2C2C2C;
-    color: #FFFFFF;
-}
-.stButton > button:hover {
-    background-color: #444;
-}
-
-/* --- ESTILOS DA JANELA DE CHAT --- */
-/* Contêiner da conversa com scroll interno */
-.chat-window {
-    max-width: 900px;
-    margin: auto;
-    background-color: #E5DDD5; /* Fundo do chat (bege do WhatsApp) */
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    padding: 1rem;
-    height: 75vh; /* altura visível */
-    overflow-y: auto; /* scroll só aqui */
-}
-
-/* Cabeçalho do Chat */
-.chat-header {
-    background-color: #008069;
-    color: white;
-    padding: 10px 15px;
-    font-size: 18px;
-    font-weight: 600;
-    border-radius: 8px 8px 0 0;
-}
-
-/* Bolhas de Chat */
-div[data-testid="stChatMessage"] {
-    box-shadow: none;
-    border-radius: 8px;
-    padding: 0.75rem;
-}
+/* Bolhas de Chat do Usuário */
 div[data-testid="stChatMessage"]:has(div[data-testid="stAvatarIcon-user"]) {
-    background-color: #D9FDD3;
-}
-div[data-testid="stChatMessage"]:has(div[data-testid="stAvatarIcon-assistant"]) {
-    background-color: #FFFFFF;
-}
-
-/* Campo de Digitação */
-[data-testid="stChatInput"] {
-    background-color: #F0F2F5;
-    border-top: 1px solid #D1D7DB;
-    border-radius: 0 0 8px 8px;
-}
-[data-testid="stChatInput"] > div {
-    background-color: #FFFFFF;
+    background-color: #D9FDD3; /* Verde claro */
     border-radius: 8px;
 }
-/* NOVIDADE: Melhora o destaque dos campos de input APENAS no tema claro */
+
+/* Remove a cor de fundo padrão do texto "Selecione o canal..." */
+div[data-testid="stRadio"] > label {
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+}
+
+
+/* --- TEMA CLARO --- */
+
+/* Fundo principal da página no tema claro */
+body:not(.dark) [data-testid="stAppViewContainer"] > .main {
+    background-color: #FFFFFF; /* Fundo branco limpo */
+}
+
+/* Labels dos campos no tema claro */
+body:not(.dark) label {
+    color: #4F4F4F !important; /* Cor escura para o texto dos labels */
+}
+
+/* Campos de input e seleção no tema claro */
 body:not(.dark) div[data-testid="stTextInput"] input,
 body:not(.dark) div[data-testid="stSelectbox"] div[data-baseweb="select"],
 body:not(.dark) div[data-testid="stTextArea"] textarea {
-    background-color: #F0F2F5; /* Fundo cinza claro */
-    border: 1px solid #D1D7DB; /* Borda cinza um pouco mais escura */
+    background-color: #F0F2F5; /* Fundo cinza claro para destaque */
+    border: 1px solid #D1D7DB;
+    border-radius: 8px;
+    color: #111b21; /* Texto escuro */
+}
+
+/* Bolha de Chat do Assistente no tema claro */
+body:not(.dark) div[data-testid="stChatMessage"]:has(div[data-testid="stAvatarIcon-assistant"]) {
+    background-color: #F0F2F5; /* Cinza claro */
     border-radius: 8px;
 }
 
-body:not(.dark) div[data-testid="stRadio"] label {
-    background-color: #F0F2F5;
-    border: 1px solid #D1D7DB;
-    padding: 5px 10px;
+/* --- TEMA ESCURO --- */
+
+/* Fundo principal da página no tema escuro */
+body.dark [data-testid="stAppViewContainer"] > .main {
+    background-color: #121212; /* Fundo escuro */
+}
+
+/* Labels dos campos no tema escuro */
+body.dark label {
+    color: #EAEAEA !important; /* Cor clara para o texto dos labels */
+}
+
+/* Campos de input e seleção no tema escuro */
+body.dark div[data-testid="stTextInput"] input,
+body.dark div[data-testid="stSelectbox"] div[data-baseweb="select"],
+body.dark div[data-testid="stTextArea"] textarea {
+    background-color: #2a2a2a; /* Fundo cinza escuro para destaque */
+    border: 1px solid #555555;
     border-radius: 8px;
-    margin: 2px;
+    color: #FFFFFF; /* Texto branco */
+}
+
+/* Bolha de Chat do Assistente no tema escuro */
+body.dark div[data-testid="stChatMessage"]:has(div[data-testid="stAvatarIcon-assistant"]) {
+    background-color: #2a2a2a; /* Cinza escuro */
+    border-radius: 8px;
 }
