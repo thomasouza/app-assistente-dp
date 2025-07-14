@@ -4,7 +4,7 @@ from helpers import load_css, carregar_base_conhecimento
 # Carrega o CSS e verifica o login
 load_css("style.css")
 if not st.session_state.get('logged_in', False):
-    st.switch_page("1_Login.py")
+    st.switch_page("Login.py")
 
 # --- CONTEÚDO DA PÁGINA DE FAQ ---
 st.header("Perguntas Frequentes (FAQ)")
