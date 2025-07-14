@@ -81,17 +81,26 @@ def carregar_acessos():
             print(f"Erro ao carregar acessos: {e}")
     return None
 
-def salvar_log(matricula, pergunta, resposta):
+
+def salvar_log(matricula_dp, nome_colaborador, empresa, pergunta, resposta):
+    """Salva um registro completo do atendimento na planilha de logs."""
     client = get_gspread_client()
     if client:
         try:
             log_spreadsheet = client.open("LOGS_DE_CONVERSA_DP")
             log_worksheet = log_spreadsheet.get_worksheet(0)
             timestamp = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-            nova_linha = [timestamp, matricula, pergunta, resposta]
+            
+            # Nova linha com as informações adicionais
+            nova_linha = [timestamp, matricula_dp, nome_colaborador, empresa, pergunta, resposta]
+            
             log_worksheet.append_row(nova_linha)
+            return True # Retorna sucesso
         except Exception as e:
             print(f"Erro ao salvar log: {e}")
+            return False # Retorna falha
+    return False
+
 
 def verificar_login(matricula, senha, df_acessos):
     if df_acessos is not None and not df_acessos.empty:
