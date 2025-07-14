@@ -65,7 +65,65 @@ def carregar_base_conhecimento():
             print(f"Erro ao carregar base de conhecimento: {e}")
     return None
 
-# E SUBSTITUA por este novo bloco:
+# NOVIDADE: A função de carregar a base agora também lê os feedbacks
+@st.cache_data(ttl=300) # Cache de 5 minutos para pegar novos aprendizados
+def carregar_base_conhecimento():
+    """
+    Carrega a base de conhecimento das abas principais E da aba de aprendizado.
+    O aprendizado é priorizado no contexto enviado para a IA.
+    """
+    client = get_gspread_client()
+    if client:
+        try:
+            spreadsheet = client.open("BASE_DE_CONHECIMENTO_DP")
+            abas = {}
+            
+            # Carrega a aba de aprendizado primeiro
+            try:
+                aprendizado_sheet = spreadsheet.worksheet("Feedback_Aprendizado")
+                aprendizado_df = pd.DataFrame(aprendizado_sheet.get_all_records())
+            except gspread.exceptions.WorksheetNotFound:
+                aprendizado_df = pd.DataFrame() # Se não existir, cria um df vazio
+            
+            # Carrega as outras abas de conhecimento
+            for worksheet in spreadsheet.worksheets():
+                if worksheet.title != "Feedback_Aprendizado":
+                    df = pd.DataFrame(worksheet.get_all_records())
+                    
+                    # Adiciona os aprendizados relevantes ao contexto de cada tópico
+                    if not aprendizado_df.empty:
+                        aprendizados_do_topico = aprendizado_df[aprendizado_df['Assunto'] == worksheet.title]
+                        if not aprendizados_do_topico.empty:
+                            # Converte o feedback em um formato de "Pergunta/Resposta" para a IA
+                            aprendizado_formatado = aprendizados_do_topico.rename(columns={
+                                'Pergunta_Original': 'Pergunta',
+                                'Comentario_Correcao_Humano': 'Resposta_Oficial'
+                            })[['Pergunta', 'Resposta_Oficial']]
+                            df = pd.concat([aprendizado_formatado, df], ignore_index=True)
+                    
+                    abas[worksheet.title] = df
+            return abas
+        except Exception as e:
+            st.error("Não foi possível carregar a base de conhecimento.")
+            print(f"Erro ao carregar base de conhecimento: {e}")
+    return None
+
+# NOVIDADE: Nova função para salvar o feedback na planilha de aprendizado
+def salvar_aprendizado(assunto, pergunta, resposta_ia, comentario_humano):
+    """Salva a correção humana na aba de aprendizado para treinar a IA."""
+    client = get_gspread_client()
+    if client:
+        try:
+            spreadsheet = client.open("BASE_DE_CONHECIMENTO_DP")
+            worksheet = spreadsheet.worksheet("Feedback_Aprendizado")
+            timestamp = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            nova_linha = [timestamp, assunto, pergunta, resposta_ia, comentario_humano]
+            worksheet.append_row(nova_linha)
+            return True
+        except Exception as e:
+            print(f"Erro ao salvar aprendizado: {e}")
+            return False
+    return False
 
 # A única mudança é nesta primeira linha, adicionando o (ttl=600)
 @st.cache_data(ttl=600)
