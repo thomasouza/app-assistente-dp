@@ -1,58 +1,57 @@
-/* CSS Definitivo - Foco em Especificidade e Design Final */
+/* style.css - Versão Final de Design */
 
-/* --- CONFIGURAÇÃO GERAL --- */
-/* Remove o padding do topo para dar espaço ao nosso cabeçalho customizado */
-.block-container {
-    padding-top: 1rem !important;
-}
-
+/* --- CONFIGURAÇÃO GERAL DA PÁGINA --- */
 /* Fundo principal da página (onde fica a marca d'água) */
 [data-testid="stAppViewContainer"] > .main {
     background-color: #DADBD3; /* Cinza-bege de fundo */
     background-image: url('https://www.toptal.com/designers/subtlepatterns/uploads/watercolor.png');
     background-size: 300px;
-    overflow: hidden;
-    height: 100vh;
 }
-
-/* Remove scroll geral da página */
-html, body {
-    overflow: hidden;
-    height: 100vh;
+/* Remove o padding excessivo do topo */
+.block-container {
+    padding-top: 1rem !important;
 }
 
 /* --- ESTILOS DA SIDEBAR (MENU LATERAL) --- */
+/* Seletor específico para forçar o fundo escuro */
 section[data-testid="stSidebar"] > div:first-child {
     background-color: #1E1E1E !important; /* Fundo escuro */
-    padding: 1rem;
-    color: #FFFFFF;
 }
-
-/* Força cores brancas nos elementos da sidebar */
+/* Força a cor de todos os textos na sidebar para branco */
 section[data-testid="stSidebar"] * {
     color: #FFFFFF !important;
 }
-
 /* Esconde o menu de navegação padrão do Streamlit */
 [data-testid="stSidebarNav"] {
     display: none;
 }
-
-/* Estilo dos botões de Agente na Sidebar */
-.stButton > button {
+/* Card de Agente Clicável */
+a.agent-card-link {
+    text-decoration: none;
+}
+div.agent-card {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 8px;
     border-radius: 8px;
-    font-weight: 600;
-    text-align: left;
-    border: 1px solid #E0E0E0;
-    background-color: #2C2C2C;
-    color: #FFFFFF;
+    transition: background-color 0.2s;
+    background-color: #2C2C2C; /* Cor do card do agente */
 }
-.stButton > button:hover {
-    background-color: #444;
+div.agent-card:hover {
+    background-color: #444444; /* Efeito de hover */
 }
+div.agent-card.selected {
+    background-color: #005E54; /* Fundo verde escuro quando selecionado */
+}
+/* Detalhes dentro do card do agente */
+.agent-avatar { font-size: 24px; margin-right: 12px; }
+.agent-info { line-height: 1.2; }
+.agent-name { font-weight: 600; }
+.agent-status { font-size: 12px; color: #00A884 !important; /* Verde claro para o status "Online" */ }
 
 /* --- ESTILOS DA JANELA DE CHAT --- */
-/* Contêiner da conversa com scroll interno */
+/* O contêiner que cria o efeito de "janela menor" */
 .chat-window {
     max-width: 900px;
     margin: auto;
@@ -60,10 +59,7 @@ section[data-testid="stSidebar"] * {
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     padding: 1rem;
-    height: 75vh; /* altura visível */
-    overflow-y: auto; /* scroll só aqui */
 }
-
 /* Cabeçalho do Chat */
 .chat-header {
     background-color: #008069;
@@ -73,27 +69,15 @@ section[data-testid="stSidebar"] * {
     font-weight: 600;
     border-radius: 8px 8px 0 0;
 }
-
 /* Bolhas de Chat */
-div[data-testid="stChatMessage"] {
-    box-shadow: none;
-    border-radius: 8px;
-    padding: 0.75rem;
-}
 div[data-testid="stChatMessage"]:has(div[data-testid="stAvatarIcon-user"]) {
     background-color: #D9FDD3;
 }
 div[data-testid="stChatMessage"]:has(div[data-testid="stAvatarIcon-assistant"]) {
     background-color: #FFFFFF;
 }
-
 /* Campo de Digitação */
 [data-testid="stChatInput"] {
     background-color: #F0F2F5;
     border-top: 1px solid #D1D7DB;
-    border-radius: 0 0 8px 8px;
-}
-[data-testid="stChatInput"] > div {
-    background-color: #FFFFFF;
-    border-radius: 8px;
 }

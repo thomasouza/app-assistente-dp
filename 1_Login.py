@@ -10,7 +10,6 @@ st.set_page_config(
 )
 
 # --- CSS Específico para a Página de Login ---
-# MUDANÇA 3: Adicionada regra para diminuir o espaçamento entre os inputs
 login_page_css = f"""
 <style>
     /* Esconde o cabeçalho e a barra lateral para uma tela de login imersiva */
@@ -60,7 +59,7 @@ st.markdown(login_page_css, unsafe_allow_html=True)
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
     st.session_state.matricula = ""
-    st.session_state.messages = {} # <--- A LINHA QUE FALTAVA
+    st.session_state.messages = {}
 
 # --- LÓGICA DA PÁGINA DE LOGIN ---
 df_acessos = carregar_acessos()
@@ -68,15 +67,13 @@ df_acessos = carregar_acessos()
 # Colunas para ajudar na centralização
 col1, col2, col3 = st.columns([1, 1.2, 1])
 with col2:
-    # MUDANÇA 1: Removido o st.container(border=True) que criava o retângulo extra
-
+    st.markdown('<div class="login-card">', unsafe_allow_html=True)
     
     try:
         st.image("img/quokka_logo.png", width=150)
     except FileNotFoundError:
         st.title("VIVA Company")
 
-    # MUDANÇA 2: Trocado st.header por st.subheader para um texto menor
     st.subheader("Acesse sua conta")
     
     matricula_input = st.text_input("Matrícula", label_visibility="collapsed", placeholder="Matrícula", key="login_matricula")
