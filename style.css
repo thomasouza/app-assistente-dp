@@ -97,3 +97,11 @@ div[data-testid="stChatMessage"]:has(div[data-testid="stAvatarIcon-assistant"]) 
     background-color: #FFFFFF;
     border-radius: 8px;
 }
+pre {
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    background-color: #F0F2F5; /* Fundo cinza claro consistente */
+    color: #111b21;        /* Texto escuro e legível */
+    border-radius: 8px;
+    padding: 1rem;
+}

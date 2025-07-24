@@ -118,12 +118,8 @@ if 'ultima_resposta' in st.session_state and st.session_state.ultima_resposta:
     st.divider()
     st.subheader("2. Resposta Sugerida pela IA")
     
-    st.text_area(
-        label="Copia a resposta sugerida abaixo:",
-        value=st.session_state.ultima_resposta,
-        height=200,
-        disabled=True
-    )
+    st.code(st.session_state.ultima_resposta, language=None)
+    st.caption("Clique no ícone no canto direito do campo acima para copiar o texto.")
     
     st.divider()
 
