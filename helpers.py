@@ -43,9 +43,8 @@ def carregar_base_conhecimento():
         except Exception as e: print(f"Erro ao carregar base: {e}")
     return None
 
-@st.cache_data(ttl=600)
+@st.cache_data
 def carregar_acessos():
-    # ... (código da função permanece o mesmo)
     client = get_gspread_client()
     if client:
         try:
@@ -57,14 +56,15 @@ def carregar_acessos():
     return None
 
 def salvar_log(matricula, pergunta, resposta):
-    # ... (código da função permanece o mesmo)
     client = get_gspread_client()
     if client:
         try:
             log_sheet = client.open("LOGS_DE_CONVERSA_DP").get_worksheet(0)
             timestamp = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-            log_sheet.append_row([timestamp, matricula, pergunta, resposta])
-        except Exception as e: print(f"Erro ao salvar log: {e}")
+            nova_linha = [timestamp, matricula, pergunta, resposta]
+            log_worksheet.append_row(nova_linha)
+        except Exception as e:
+            print(f"Erro ao salvar log: {e}")
 
 def verificar_login(matricula, senha, df_acessos):
     if df_acessos is not None and not df_acessos.empty:
